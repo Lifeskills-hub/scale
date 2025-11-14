@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appliance Fix Help</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4a90e2, #0077cc);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: #4a90e2;
+            border-bottom-color: #4a90e2;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #444;
+        }
+
+        input[type="text"], 
+        textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        input[type="text"]:focus, 
+        textarea:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .upload-area {
+            border: 2px dashed #aaa;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: #f9fdfc;
+        }
+
+        .upload-area:hover {
+            border-color: #4a90e2;
+            background-color: #f0f7ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #4a90e2;
+            background-color: #e6f3ff;
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: #aaa;
+            margin-bottom: 1rem;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 300px;
+            margin-top: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background-color: #357abd;
+        }
+
+        .btn:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+
+        .requests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .request-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .request-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .request-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .request-body {
+            padding: 1.2rem;
+        }
+
+        .request-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .request-desc {
+            color: #555;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .request-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 1rem;
+        }
+
+        .offer-help {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .offer-help input {
+            width: 70px;
+            padding: 0.4rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .offer-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .offer-btn:hover {
+            background-color: #218838;
+        }
+
+        .status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status.has-offers {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .no-requests {
+            text-align: center;
+            padding: 3rem;
+            color: #777;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .requests-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .offer-help {
+                flex-direction: column;
+            }
+
+            .offer-help input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Appliance Fix Help</h1>
+        <p>Upload your faulty appliance photo and get help from local fixers for a small fee</p>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-tab="create">Create Request</div>
+            <div class="tab" data-tab="view">View Requests</div>
+        </div>
+
+        <!-- Create Request Tab -->
+        <div id="create" class="tab-content active">
+            <form id="requestForm">
+                <div class="form-group">
+                    <label for="applianceName">Appliance Name</label>
+                    <input type="text" id="applianceName" placeholder="e.g., Samsung Refrigerator, LG Washing Machine" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="issueDescription">Describe the Issue</label>
+                    <textarea id="issueDescription" placeholder="Explain what's wrong with your appliance..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Upload Photo of the Faulty Appliance</label>
+                    <div id="uploadArea" class="upload-area">
+                        <i>📷</i>
+                        <p>Drag & drop an image here, or click to select</p>
+                        <input type="file" id="photoInput" accept="image/*" hidden>
+                    </div>
+                    <img id="preview" class="preview-img" alt="Preview">
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn" disabled>Submit Request</button>
+            </form>
+        </div>
+
+        <!-- View Requests Tab -->
+        <div id="view" class="tab-content">
+            <div id="requestsContainer">
+                <p class="no-requests">No requests yet. Be the first to create one!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const requestForm = document.getElementById('requestForm');
+        const uploadArea = document.getElementById('uploadArea');
+        const photoInput = document.getElementById('photoInput');
+        const preview = document.getElementById('preview');
+        const submitBtn = document.getElementById('submitBtn');
+        const requestsContainer = document.getElementById('requestsContainer');
+
+        // In-memory storage (in real app, use backend + database)
+        let requests = JSON.parse(localStorage.getItem('applianceRequests')) || [];
+        let currentImage = null;
+
+        // Tab switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.tab;
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === target) {
+                        content.classList.add('active');
+                    }
+                });
+
+                if (target === 'view') {
+                    renderRequests();
+                }
+            });
+        });
+
+        // Upload area click
+        uploadArea.addEventListener('click', () => photoInput.click());
+
+        // Drag and drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => uploadArea.classList.add('dragover'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('dragover'), false);
+        });
+
+        uploadArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        photoInput.addEventListener('change', () => {
+            if (photoInput.files.length) {
+                handleFiles(photoInput.files);
+            }
+        });
+
+        function handleFiles(files) {
+            const file = files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentImage = e.target.result;
+                    preview.src = currentImage;
+                    preview.style.display = 'block';
+                    checkFormValidity();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Enable submit button when all fields are filled
+        ['applianceName', 'issueDescription'].forEach(id => {
+            document.getElementById(id).addEventListener('input', checkFormValidity);
+        });
+
+        function checkFormValidity() {
+            const name = document.getElementById('applianceName').value.trim();
+            const desc = document.getElementById('issueDescription').value.trim();
+            submitBtn.disabled = !(name && desc && currentImage);
+        }
+
+        // Submit request
+        requestForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const newRequest = {
+                id: Date.now().toString(),
+                applianceName: document.getElementById('applianceName').value.trim(),
+                issueDescription: document.getElementById('issueDescription').value.trim(),
+                image: currentImage,
+                createdAt: new Date().toLocaleString(),
+                offers: []
+            };
+
+            requests.unshift(newRequest);
+            localStorage.setItem('applianceRequests', JSON.stringify(requests));
+
+            // Reset form
+            requestForm.reset();
+            preview.src = '';
+            preview.style.display = 'none';
+            currentImage = null;
+            submitBtn.disabled = true;
+
+            alert('Request created successfully! You can now view it in the "View Requests" tab.');
+
+            // Switch to view tab
+            document.querySelector('[data-tab="view"]').click();
+        });
+
+        // Render requests
+        function renderRequests() {
+            if (requests.length === 0) {
+                requestsContainer.innerHTML = '<p class="no-requests">No requests yet. Be the first to create one!</p>';
+                return;
+            }
+
+            requestsContainer.innerHTML = '<div class="requests-grid"></div>';
+            const grid = requestsContainer.querySelector('.requests-grid');
+
+            requests.forEach(req => {
+                const card = document.createElement('div');
+                card.className = 'request-card';
+                card.innerHTML = `
+                    <img src="${req.image}" alt="${req.applianceName}" class="request-img">
+                    <div class="request-body">
+                        <div class="request-title">${req.applianceName}</div>
+                        <div class="request-desc">${req.issueDescription}</div>
+                        <div class="request-meta">
+                            <span>Posted: ${req.createdAt}</span>
+                            <span class="status ${req.offers.length > 0 ? 'has-offers' : 'pending'}">
+                                ${req.offers.length > 0 ? `${req.offers.length} offer(s)` : 'No offers yet'}
+                            </span>
+                        </div>
+                        <div class="offer-help">
+                            <input type="number" placeholder="Your fee ($)" min="5" max="200" class="fee-input">
+                            <button class="offer-btn" data-id="${req.id}">Offer Help</button>
+                        </div>
+                    </div>
+                `;
+
+                // Offer help functionality
+                const offerBtn = card.querySelector('.offer-btn');
+                const feeInput = card.querySelector('.fee-input');
+
+                offerBtn.addEventListener('click', () => {
+                    const fee = feeInput.value.trim();
+                    if (!fee || isNaN(fee) || fee < 5 || fee > 200) {
+                        alert('Please enter a valid fee between $5 and $200');
+                        return;
+                    }
+
+                    const name = prompt('Enter your name:');
+                    const phone = prompt('Enter your phone number:');
+                    
+                    if (name && phone) {
+                        const offer = {
+                            name: name.trim(),
+                            phone: phone.trim(),
+                            fee: parseFloat(fee),
+                            timestamp: new Date().toLocaleString()
+                        };
+
+                        const request = requests.find(r => r.id === req.id);
+                        request.offers.push(offer);
+                        localStorage.setItem('applianceRequests', JSON.stringify(requests));
+
+                        alert(`Thank you, ${name}! Your offer of $${fee} has been submitted.`);
+                        renderRequests(); // Refresh
+                    }
+                });
+
+                grid.appendChild(card);
+            });
+        }
+
+        // Initial render
+        renderRequests();
+    </script>
+</body>
+</html>
