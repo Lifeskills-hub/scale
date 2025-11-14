@@ -3,51 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appliance Fix Help – Location Aware</title>
+    <title>Appliance Fix Help – Map View</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-sA+Z3MBvP9dW0f4Z4dQld1KqWnN0X3R3jV5X7h5p5Q=" crossorigin=""/>
+
     <style>
-        /* (same CSS as before – only new/changed parts are commented) */
-        * {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
-        body {background:#f4f6f9;color:#333;line-height:1.6;}
-        header {background:linear-gradient(135deg,#4a90e2,#0077cc);color:#fff;padding:2rem 1rem;text-align:center;box-shadow:0 4px 8px rgba(0,0,0,.1);}
-        h1 {font-size:2.2rem;margin-bottom:.5rem;}
-        .container {max-width:1100px;margin:2rem auto;padding:0 1rem;}
-        .tabs {display:flex;margin-bottom:1.5rem;border-bottom:2px solid #ddd;}
-        .tab {padding:1rem 1.5rem;cursor:pointer;font-weight:600;transition:all .3s;border-bottom:3px solid transparent;}
-        .tab.active {color:#4a90e2;border-bottom-color:#4a90e2;}
-        .tab-content {display:none;background:#fff;padding:2rem;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08);}
-        .tab-content.active {display:block;}
-        .form-group {margin-bottom:1.2rem;}
-        label {display:block;margin-bottom:.5rem;font-weight:600;color:#444;}
-        input[type=text],textarea,select {width:100%;padding:.8rem;border:1px solid #ccc;border-radius:8px;font-size:1rem;transition:border .3s;}
-        input:focus,textarea:focus,select:focus {outline:none;border-color:#4a90e2;box-shadow:0 0 0 3px rgba(74,144,226,.2);}
-        textarea {min-height:120px;resize:vertical;}
-        .upload-area {border:2px dashed #aaa;border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:all .3s;background:#f9fdfc;}
-        .upload-area:hover {border-color:#4a90e2;background:#f0f7ff;}
-        .upload-area.dragover {border-color:#4a90e2;background:#e6f3ff;}
-        .upload-area i {font-size:3rem;color:#aaa;margin-bottom:1rem;}
-        .preview-img {max-width:100%;max-height:300px;margin-top:1rem;border-radius:8px;display:none;}
-        .btn {background:#4a90e2;color:#fff;border:none;padding:.8rem 1.5rem;font-size:1rem;border-radius:8px;cursor:pointer;transition:background .3s;font-weight:600;}
-        .btn:hover {background:#357abd;}
-        .btn:disabled {background:#aaa;cursor:not-allowed;}
-        .requests-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem;margin-top:1rem;}
-        .request-card {background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.08);transition:transform .3s,box-shadow .3s;}
-        .request-card:hover {transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,.12);}
-        .request-img {width:100%;height:200px;object-fit:cover;}
-        .request-body {padding:1.2rem;}
-        .request-title {font-weight:700;font-size:1.2rem;margin-bottom:.5rem;color:#333;}
-        .request-desc {color:#555;margin-bottom:1rem;font-size:.95rem;}
-        .request-meta {display:flex;justify-content:space-between;align-items:center;font-size:.9rem;color:#777;margin-bottom:.8rem;}
-        .distance {font-weight:600;color:#4a90e2;}
-        .status {padding:.3rem .8rem;border-radius:20px;font-size:.8rem;font-weight:600;}
-        .status.pending {background:#fff3cd;color:#856404;}
-        .status.has-offers {background:#d4edda;color:#155724;}
-        .offer-help {display:flex;align-items:center;gap:.5rem;}
-        .offer-help input {width:70px;padding:.4rem;border:1px solid #ddd;border-radius:6px;text-align:center;}
-        .offer-btn {background:#28a745;color:#fff;border:none;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;}
-        .offer-btn:hover {background:#218838;}
-        .no-requests {text-align:center;padding:3rem;color:#777;font-style:italic;}
-        .filter-bar {display:flex;gap:.5rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;}
-        .filter-bar label {margin-right:.5rem;}
+        /* (same CSS as before – only new parts are commented) */
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
+        body{background:#f4f6f9;color:#333;line-height:1.6;}
+        header{background:linear-gradient(135deg,#4a90e2,#0077cc);color:#fff;padding:2rem 1rem;text-align:center;box-shadow:0 4px 8px rgba(0,0,0,.1);}
+        h1{font-size:2.2rem;margin-bottom:.5rem;}
+        .container{max-width:1200px;margin:2rem auto;padding:0 1rem;}
+        .tabs{display:flex;margin-bottom:1.5rem;border-bottom:2px solid #ddd;}
+        .tab{padding:1rem 1.5rem;cursor:pointer;font-weight:600;transition:all .3s;border-bottom:3px solid transparent;}
+        .tab.active{color:#4a90e2;border-bottom-color:#4a90e2;}
+        .tab-content{display:none;background:#fff;padding:2rem;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.08);}
+        .tab-content.active{display:block;}
+        .form-group{margin-bottom:1.2rem;}
+        label{display:block;margin-bottom:.5rem;font-weight:600;color:#444;}
+        input[type=text],textarea,select{width:100%;padding:.8rem;border:1px solid #ccc;border-radius:8px;font-size:1rem;transition:border .3s;}
+        input:focus,textarea:focus,select:focus{outline:none;border-color:#4a90e2;box-shadow:0 0 0 3px rgba(74,144,226,.2);}
+        textarea{min-height:120px;resize:vertical;}
+        .upload-area{border:2px dashed #aaa;border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:all .3s;background:#f9fdfc;}
+        .upload-area:hover{border-color:#4a90e2;background:#f0f7ff;}
+        .upload-area.dragover{border-color:#4a90e2;background:#e6f3ff;}
+        .upload-area i{font-size:3rem;color:#aaa;margin-bottom:1rem;}
+        .preview-img{max-width:100%;max-height:300px;margin-top:1rem;border-radius:8px;display:none;}
+        .btn{background:#4a90e2;color:#fff;border:none;padding:.8rem 1.5rem;font-size:1rem;border-radius:8px;cursor:pointer;transition:background .3s;font-weight:600;}
+        .btn:hover{background:#357abd;}
+        .btn:disabled{background:#aaa;cursor:not-allowed;}
+        .requests-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem;margin-top:1rem;}
+        .request-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.08);transition:transform .3s,box-shadow .3s;}
+        .request-card:hover{transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,.12);}
+        .request-img{width:100%;height:200px;object-fit:cover;}
+        .request-body{padding:1.2rem;}
+        .request-title{font-weight:700;font-size:1.2rem;margin-bottom:.5rem;color:#333;}
+        .request-desc{color:#555;margin-bottom:1rem;font-size:.95rem;}
+        .request-meta{display:flex;justify-content:space-between;align-items:center;font-size:.9rem;color:#777;margin-bottom:.8rem;}
+        .distance{font-weight:600;color:#4a90e2;}
+        .status{padding:.3rem .8rem;border-radius:20px;font-size:.8rem;font-weight:600;}
+        .status.pending{background:#fff3cd;color:#856404;}
+        .status.has-offers{background:#d4edda;color:#155724;}
+        .offer-help{display:flex;align-items:center;gap:.5rem;}
+        .offer-help input{width:70px;padding:.4rem;border:1px solid #ddd;border-radius:6px;text-align:center;}
+        .offer-btn{background:#28a745;color:#fff;border:none;padding:.5rem 1rem;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;}
+        .offer-btn:hover{background:#218838;}
+        .no-requests{text-align:center;padding:3rem;color:#777;font-style:italic;}
+        .filter-bar{display:flex;gap:.5rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;}
+        .filter-bar label{margin-right:.5rem;}
+        .map-container{height:400px;margin-bottom:1.5rem;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.1);}
         @media (max-width:768px){
             .requests-grid{grid-template-columns:1fr;}
             .offer-help{flex-direction:column;}
@@ -58,7 +64,7 @@
 <body>
     <header>
         <h1>Appliance Fix Help</h1>
-        <p>Upload a photo of your broken appliance, add your location and get help from nearby fixers.</p>
+        <p>Upload a photo, add your location, and see nearby fixers on a map.</p>
     </header>
 
     <div class="container">
@@ -118,27 +124,36 @@
                     <option value="km">km</option>
                     <option value="mi">miles</option>
                 </select>
-                <button id="applyFilter" class="btn" style="padding:.4rem .8rem;">ApplyApply</button>
-                <button id="resetLoc" class="btn" style="background:#dc3545;padding:.4rem .8rem;">Reset My Location</button>
+                <button id="applyFilter" class="btn" style="padding:.4rem .8rem;">Apply</button>
+                <button id="resetLoc" class="btn" style="background:#dc3545;padding:.4rem .8rem;">Reset Location</button>
             </div>
+
+            <!-- MAP -->
+            <div id="map" class="map-container"></div>
+
             <div id="requestsContainer">
-                <p class="no-requests">Loading…</p>
+                <p class="no-requests">Loading map…</p>
             </div>
         </div>
     </div>
 
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-o9N1jA3/OVl2H3X2j2b6H7u5l5g5I5F5H5X5X5X5X5X=" crossorigin=""></script>
+
     <script>
-        /* ---------- GLOBAL ---------- */
+        /* ---------- GLOBALS ---------- */
         const STORAGE_KEY = 'applianceRequests';
         let requests = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
         let currentImage = null;
-        let myPosition = null;               // {lat, lng, city}
-        const GEO_API = 'https://nominatim.openstreetmap.org/search?format=json&q=';
+        let myPosition = null;
+        let map = null;
+        let markersLayer = null;
 
         /* ---------- HELPERS ---------- */
         function haversine(lat1, lon1, lat2, lon2, unit = 'km') {
-            const toRad = (v) => v * Math.PI / 180;
-            const R = unit === 'km' ? 6371 : 3959; // Earth radius
+            const toRad = v => v * Math.PI / 180;
+            const R = unit === 'km' ? 6371 : 3959;
             const dLat = toRad(lat2 - lat1);
             const dLon = toRad(lon2 - lon1);
             const a = Math.sin(dLat/2)**2 +
@@ -153,12 +168,8 @@
             try {
                 const res = await fetch(url);
                 const data = await res.json();
-                const city = data.address?.city || data.address?.town || data.address?.village || '';
-                return city;
-            } catch (e) {
-                console.warn('Reverse geocode failed', e);
-                return '';
-            }
+                return data.address?.city || data.address?.town || data.address?.village || '';
+            } catch { return ''; }
         }
 
         function saveRequests() {
@@ -172,8 +183,7 @@
                 tab.classList.add('active');
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 document.getElementById(tab.dataset.tab).classList.add('active');
-
-                if (tab.dataset.tab === 'view') renderRequests();
+                if (tab.dataset.tab === 'view') initMapAndRender();
             });
         });
 
@@ -221,21 +231,16 @@
         const geoBtn = document.getElementById('geoBtn');
         const geoStatus = document.getElementById('geoStatus');
         geoBtn.addEventListener('click', () => {
-            if (!navigator.geolocation) {
-                geoStatus.textContent = 'Geolocation not supported';
-                return;
-            }
+            if (!navigator.geolocation) return geoStatus.textContent = 'Geolocation not supported';
             geoStatus.textContent = 'Locating…';
             navigator.geolocation.getCurrentPosition(async pos => {
                 const {latitude, longitude} = pos.coords;
                 const city = await reverseGeocode(latitude, longitude);
                 document.getElementById('city').value = city || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
                 myPosition = {lat: latitude, lng: longitude, city};
-                geoStatus.textContent = city ? `Located: ${city}` : 'Location found (no city name)';
+                geoStatus.textContent = city ? `Located: ${city}` : 'Location found';
                 checkForm();
-            }, err => {
-                geoStatus.textContent = 'Failed: ' + err.message;
-            }, {timeout: 10000});
+            }, err => geoStatus.textContent = 'Failed: ' + err.message, {timeout: 10000});
         });
 
         /* ---------- SUBMIT REQUEST ---------- */
@@ -244,8 +249,6 @@
 
             const city = document.getElementById('city').value.trim();
             const zip = document.getElementById('zip').value.trim();
-
-            // If we have browser coords, store them (more accurate for distance calc)
             const loc = myPosition ? {lat: myPosition.lat, lng: myPosition.lng, city} : {city};
 
             const newReq = {
@@ -262,57 +265,94 @@
             requests.unshift(newReq);
             saveRequests();
 
-            // reset
             e.target.reset();
             preview.src = ''; preview.style.display = 'none';
             currentImage = null; myPosition = null;
             document.getElementById('submitBtn').disabled = true;
             geoStatus.textContent = '';
 
-            alert('Request created! Switch to “View Requests” to see it.');
+            alert('Request created! View it on the map.');
             document.querySelector('[data-tab="view"]').click();
         });
 
-        /* ---------- RENDER REQUESTS ---------- */
-        const container = document.getElementById('requestsContainer');
-        const maxDistInput = document.getElementById('maxDist');
-        const unitSelect = document.getElementById('unit');
-        const applyBtn = document.getElementById('applyFilter');
-        const resetLocBtn = document.getElementById('resetLoc');
+        /* ---------- MAP & RENDER ---------- */
+        function initMapAndRender() {
+            if (map) { map.remove(); }
 
-        function renderRequests() {
-            const maxDist = parseFloat(maxDistInput.value) || 50;
-            const unit = unitSelect.value;
+            const container = document.getElementById('requestsContainer');
+            const maxDist = parseFloat(document.getElementById('maxDist').value) || 50;
+            const unit = document.getElementById('unit').value;
 
-            // Determine viewer location
-            let viewerPos = null;
-            if (myPosition) viewerPos = myPosition;
+            // Filter requests
+            const filtered = myPosition
+                ? requests.filter(r => r.location.lat && haversine(myPosition.lat, myPosition.lng, r.location.lat, r.location.lng, unit) <= maxDist)
+                : requests.filter(r => r.location.lat); // only with coords
 
-            const filtered = viewerPos
-                ? requests.filter(r => {
-                      if (!r.location.lat) return false; // only requests with coords
-                      const d = haversine(viewerPos.lat, viewerPos.lng, r.location.lat, r.location.lng, unit);
-                      return d <= maxDist;
-                  })
-                : requests; // no location → show all
+            // Init map
+            map = L.map('map').setView([51.505, -0.09], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            markersLayer = L.layerGroup().addTo(map);
 
             if (filtered.length === 0) {
-                container.innerHTML = `<p class="no-requests">
-                    ${viewerPos ? `No requests within ${maxDist} ${unit} of your location.` : 'No requests yet.'}
-                </p>`;
+                container.innerHTML = `<p class="no-requests">No requests with location data yet.</p>`;
+                map.setView([51.505, -0.09], 2);
                 return;
             }
 
+            // Add markers
+            const bounds = [];
+            filtered.forEach(req => {
+                const marker = L.marker([req.location.lat, req.location.lng])
+                    .addTo(markersLayer)
+                    .bindPopup(`
+                        <b>${req.applianceName}</b><br>
+                        ${req.location.city}<br>
+                        <button class="popup-view-btn" data-id="${req.id}">View Request</button>
+                    `)
+                    .on('popupopen', () => {
+                        document.querySelectorAll('.popup-view-btn').forEach(btn => {
+                            btn.onclick = () => {
+                                map.closePopup();
+                                const card = document.getElementById('req-' + req.id);
+                                if (card) {
+                                    card.scrollIntoView({behavior: 'smooth'});
+                                    card.style.boxShadow = '0 0 20px #4a90e2';
+                                    setTimeout(() => card.style.boxShadow = '', 2000);
+                                }
+                            };
+                        });
+                    });
+
+                bounds.push([req.location.lat, req.location.lng]);
+            });
+
+            // Center map
+            if (myPosition) {
+                map.setView([myPosition.lat, myPosition.lng], 11);
+                L.circle([myPosition.lat, myPosition.lng], {
+                    radius: maxDist * (unit === 'km' ? 1000 : 1609.34),
+                    color: '#4a90e2',
+                    fillOpacity: 0.1
+                }).addTo(map);
+            } else if (bounds.length) {
+                map.fitBounds(bounds, {padding: [50, 50]});
+            }
+
+            // Render cards
             container.innerHTML = '<div class="requests-grid"></div>';
             const grid = container.querySelector('.requests-grid');
 
             filtered.forEach(req => {
-                const distance = viewerPos && req.location.lat
-                    ? haversine(viewerPos.lat, viewerPos.lng, req.location.lat, req.location.lng, unit).toFixed(1)
+                const distance = myPosition && req.location.lat
+                    ? haversine(myPosition.lat, myPosition.lng, req.location.lat, req.location.lng, unit).toFixed(1)
                     : null;
 
                 const card = document.createElement('div');
                 card.className = 'request-card';
+                card.id = 'req-' + req.id;
                 card.innerHTML = `
                     <img src="${req.image}" alt="${req.applianceName}" class="request-img">
                     <div class="request-body">
@@ -335,7 +375,6 @@
                     </div>
                 `;
 
-                // Offer handling
                 const btn = card.querySelector('.offer-btn');
                 const feeIn = card.querySelector('.fee-input');
                 btn.addEventListener('click', () => {
@@ -349,22 +388,22 @@
                     target.offers.push(offer);
                     saveRequests();
                     alert(`Offer of $${fee} sent!`);
-                    renderRequests();
+                    initMapAndRender();
                 });
 
                 grid.appendChild(card);
             });
         }
 
-        applyBtn.addEventListener('click', renderRequests);
-        resetLocBtn.addEventListener('click', () => {
+        document.getElementById('applyFilter').addEventListener('click', initMapAndRender);
+        document.getElementById('resetLoc').addEventListener('click', () => {
             myPosition = null;
             geoStatus.textContent = '';
-            renderRequests();
+            initMapAndRender();
         });
 
-        // Initial render (show all)
-        renderRequests();
+        // Initial render
+        initMapAndRender();
     </script>
 </body>
 </html>
